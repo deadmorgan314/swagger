@@ -1,0 +1,139 @@
+openapi: 3.0.1
+info:
+  title: Product Management API
+  description: API для управления продуктами в интернет-магазине.
+  version: 1.0.0
+
+servers:
+  - url: http://api.example.com/v1
+
+paths:
+  /products:
+    get:
+      summary: Получить список всех продуктов
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+
+    post:
+      summary: Добавить новый продукт
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewProduct'
+      responses:
+        '201':
+          description: Продукт создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+
+  /products/{productId}:
+    get:
+      summary: Получить информацию о продукте по ID
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: ID продукта
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Продукт не найден
+
+    put:
+      summary: Обновить информацию о продукте
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: ID продукта
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewProduct'
+      responses:
+        '200':
+          description: Продукт обновлен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+
+    delete:
+      summary: Удалить продукт
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: ID продукта
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Продукт удален
+        '404':
+          description: Продукт не найден
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID продукта
+        name:
+          type: string
+          description: Название продукта
+        description:
+          type: string
+          description: Описание продукта
+        price:
+          type: number
+          format: float
+          description: Цена продукта
+        stock:
+          type: integer
+          description: Количество на складе
+
+    NewProduct:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Название продукта
+        description:
+          type: string
+          description: Описание продукта
+        price:
+          type: number
+          format: float
+          description: Цена продукта
+        stock:
+          type: integer
+          description: Количество на складе
+      required:
+        - name
+        - price
+        - stock
