@@ -1,0 +1,126 @@
+openapi: 3.0.1
+info:
+  title: User Management API
+  description: API для управления пользователями.
+  version: 1.0.0
+
+servers:
+  - url: http://api.example.com/v1
+
+paths:
+  /users:
+    get:
+      summary: Получить список всех пользователей
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+    post:
+      summary: Создать нового пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+      responses:
+        '201':
+          description: Пользователь создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/{userId}:
+    get:
+      summary: Получить информацию о пользователе по ID
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: ID пользователя
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Пользователь не найден
+
+    put:
+      summary: Обновить информацию о пользователе
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: ID пользователя
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+      responses:
+        '200':
+          description: Информация о пользователе обновлена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+    delete:
+      summary: Удалить пользователя
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: ID пользователя
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Пользователь удален
+        '404':
+          description: Пользователь не найден
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID пользователя
+        name:
+          type: string
+          description: Имя пользователя
+        email:
+          type: string
+          format: email
+          description: Электронная почта пользователя
+
+    NewUser:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Имя пользователя
+        email:
+          type: string
+          format: email
+          description: Электронная почта пользователя
+      required:
+        - name
+        - email
