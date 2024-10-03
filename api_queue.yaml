@@ -1,0 +1,126 @@
+openapi: 3.0.1
+info:
+  title: RabbitMQ Queue Management API
+  description: API для управления очередями в RabbitMQ.
+  version: 1.0.0
+
+servers:
+  - url: http://api.example.com/v1
+
+paths:
+  /queues:
+    get:
+      summary: Получить список всех очередей
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Queue'
+
+    post:
+      summary: Создать новую очередь
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewQueue'
+      responses:
+        '201':
+          description: Очередь создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Queue'
+
+  /queues/{queueName}:
+    get:
+      summary: Получить информацию о конкретной очереди
+      parameters:
+        - name: queueName
+          in: path
+          required: true
+          description: Имя очереди
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Queue'
+        '404':
+          description: Очередь не найдена
+
+    put:
+      summary: Обновить очередь
+      parameters:
+        - name: queueName
+          in: path
+          required: true
+          description: Имя очереди
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewQueue'
+      responses:
+        '200':
+          description: Очередь обновлена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Queue'
+
+    delete:
+      summary: Удалить очередь
+      parameters:
+        - name: queueName
+          in: path
+          required: true
+          description: Имя очереди
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Очередь удалена
+        '404':
+          description: Очередь не найдена
+
+components:
+  schemas:
+    Queue:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Имя очереди
+        message_count:
+          type: integer
+          description: Количество сообщений в очереди
+        consumer_count:
+          type: integer
+          description: Количество потребителей, привязанных к очереди
+        durable:
+          type: boolean
+          description: Признак долговечности очереди
+
+    NewQueue:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Имя очереди
+        durable:
+          type: boolean
+          description: Признак долговечности очереди
+      required:
+        - name
